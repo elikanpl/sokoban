@@ -210,56 +210,56 @@ public class sticky : MonoBehaviour
             }
         }
         ShouldBeActive();
-        ShouldStickyFollow();
-        if (stickyShouldFollow)
-        {
-            stickyShouldFollow = false;
-            if (Input.GetKeyDown(KeyCode.W))
-            {
-                myGridY -= movementUnit;
-                myGridObjScript.gridPosition.y = myGridY;
-                ////checks if there is a block above that is not the player
-                //GridObject[] gridObjects = FindObjectsOfType<GridObject>();
-                //for (int i = 0; i < gridObjects.Length; i++)
-                //{
-                //    GridObject gridObject = gridObjects[i];
-                //    bool checkUpX = gridObject.gridPosition.x == myGridX;
-                //    bool checkUpY = gridObject.gridPosition.y == myGridY - movementUnit;
-                //    bool isNotPlayer = gridObject.gameObject != player;
-                //    if (checkUpX && checkUpY && isNotPlayer)
-                //    {
-                //        stickyMoved = false;
-                //        stickyDidNotMove = true;
-                //        return;
-                //    }
-                //}
+        //ShouldStickyFollow();
+        //if (stickyShouldFollow)
+        //{
+        //    stickyShouldFollow = false;
+        //    if (Input.GetKeyDown(KeyCode.W))
+        //    {
+        //        myGridY -= movementUnit;
+        //        myGridObjScript.gridPosition.y = myGridY;
+        //        ////checks if there is a block above that is not the player
+        //        //GridObject[] gridObjects = FindObjectsOfType<GridObject>();
+        //        //for (int i = 0; i < gridObjects.Length; i++)
+        //        //{
+        //        //    GridObject gridObject = gridObjects[i];
+        //        //    bool checkUpX = gridObject.gridPosition.x == myGridX;
+        //        //    bool checkUpY = gridObject.gridPosition.y == myGridY - movementUnit;
+        //        //    bool isNotPlayer = gridObject.gameObject != player;
+        //        //    if (checkUpX && checkUpY && isNotPlayer)
+        //        //    {
+        //        //        stickyMoved = false;
+        //        //        stickyDidNotMove = true;
+        //        //        return;
+        //        //    }
+        //        //}
 
-                if (playerGridX == playerPrevGridX && playerGridY == playerPrevGridY)
-                {
-                    //stickyMoved = false;
-                    //stickyDidNotMove = true;
-                    return;
-                }
+        //        if (playerGridX == playerPrevGridX && playerGridY == playerPrevGridY)
+        //        {
+        //            //stickyMoved = false;
+        //            //stickyDidNotMove = true;
+        //            return;
+        //        }
 
-                //player cannot move past the upper bound of the grid
-                if (myGridY - movementUnit < 1)
-                {
-                    //stickyMoved = false;
-                    //stickyDidNotMove = true;
-                    myGridY = 1;
-                    myGridObjScript.gridPosition.y = myGridY;
-                }
-                else
-                {
-                    //stickyMoved = true;
-                    //stickyDidNotMove = false;
-                    //playerCanMove = true;
-                    //GameObject.FindWithTag("Grid").GetComponent<GridManager>().stickyCanMove = playerCanMove;
-                    myGridY -= movementUnit;
-                    myGridObjScript.gridPosition.y = myGridY;
-                }
-            }
-        }
+        //        //player cannot move past the upper bound of the grid
+        //        if (myGridY - movementUnit < 1)
+        //        {
+        //            //stickyMoved = false;
+        //            //stickyDidNotMove = true;
+        //            myGridY = 1;
+        //            myGridObjScript.gridPosition.y = myGridY;
+        //        }
+        //        else
+        //        {
+        //            //stickyMoved = true;
+        //            //stickyDidNotMove = false;
+        //            //playerCanMove = true;
+        //            //GameObject.FindWithTag("Grid").GetComponent<GridManager>().stickyCanMove = playerCanMove;
+        //            myGridY -= movementUnit;
+        //            myGridObjScript.gridPosition.y = myGridY;
+        //        }
+        //    }
+        //}
     }
 
     private void ShouldBeActive()
@@ -312,6 +312,30 @@ public class sticky : MonoBehaviour
                 stickyDidNotMove = true;
                 return;
             }
+            bool checkDownX = gridObject.gridPosition.x == myGridX;
+            bool checkDownY = gridObject.gridPosition.y == myGridY + movementUnit;
+            if (checkDownX && checkDownY && isNotPlayer)
+            { 
+                stickyMoved = false;
+                stickyDidNotMove = true;
+                return;
+            }
+            bool checkLeftX = gridObject.gridPosition.x == myGridX - movementUnit;
+            bool checkLeftY = gridObject.gridPosition.y == myGridY;
+            if (checkLeftX && checkLeftY && isNotPlayer)
+            {
+                stickyMoved = false;
+                stickyDidNotMove = true;
+                return;
+            }
+            bool checkRightX = gridObject.gridPosition.x == myGridX + movementUnit;
+            bool checkRightY = gridObject.gridPosition.y == myGridY;
+            if (checkLeftX && checkLeftY && isNotPlayer)
+            {
+                stickyMoved = false;
+                stickyDidNotMove = true;
+                return;
+            }
         }
 
         if (playerGridX == playerPrevGridX && playerGridY == playerPrevGridY)
@@ -321,8 +345,24 @@ public class sticky : MonoBehaviour
             return;
         }
 
+
         //player cannot move past the upper bound of the grid
         if (myGridY - movementUnit < 1)
+        {
+            stickyMoved = false;
+            stickyDidNotMove = true;
+        }
+        else if (myGridY + movementUnit > 5)
+        {
+            stickyMoved = false;
+            stickyDidNotMove = true;
+        }
+        else if (myGridX + movementUnit > 10)
+        {
+            stickyMoved = false;
+            stickyDidNotMove = true;
+        }
+        else if (myGridX - movementUnit < 1)
         {
             stickyMoved = false;
             stickyDidNotMove = true;

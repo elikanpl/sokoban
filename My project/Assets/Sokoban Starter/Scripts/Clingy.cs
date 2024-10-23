@@ -37,7 +37,7 @@ public class Clingy : MonoBehaviour
     {
         playerGridX = playerGridObject.gridPosition.x;
         playerGridY = playerGridObject.gridPosition.y;
-        ShouldBeActiveOtherBlocks();
+        //ShouldBeActiveOtherBlocks();
         if (active)
         {
             if (Input.GetKeyDown(KeyCode.A) && playerGridX == myGridX - 1 && playerGridY == myGridY)
@@ -212,13 +212,24 @@ public class Clingy : MonoBehaviour
                 bool checkLeftX = gridObject.gridPosition.x == myGridX - movementUnit;
                 bool checkLeftY = gridObject.gridPosition.y == myGridY;
                 bool isSticky = gridObject.gameObject.tag == "Sticky";
-                //GameObject activeSticky = gridObject.gameObject;
-                //sticky stickyScript = activeSticky.GetComponent<sticky>();
-                //bool stickyIsActive = stickyScript.stickyMoved == true;
-                if (checkLeftX && checkLeftY && isSticky && active == false)
+                if (isSticky)
                 {
-                    myGridX -= movementUnit;
-                    myGridObjScript.gridPosition.x = myGridX;
+                    GameObject activeSticky = gridObject.gameObject;
+                    sticky stickyScript = activeSticky.GetComponent<sticky>();
+                    stickyIsActive = stickyScript.active == true;
+                    stickyScript.checkStickyDidNotMove();
+                }
+                if (checkLeftX && checkLeftY && stickyIsActive)
+                {
+                    if (stickyDidNotMove)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        myGridX -= movementUnit;
+                        myGridObjScript.gridPosition.x = myGridX;
+                    }
                 }
             }
         }
@@ -234,13 +245,24 @@ public class Clingy : MonoBehaviour
                 bool checkRightX = gridObject.gridPosition.x == myGridX + movementUnit;
                 bool checkRightY = gridObject.gridPosition.y == myGridY;
                 bool isSticky = gridObject.gameObject.tag == "Sticky";
-                //GameObject activeSticky = gridObject.gameObject;
-                //sticky stickyScript = activeSticky.GetComponent<sticky>();
-                //bool stickyIsActive = stickyScript.stickyMoved == true;
-                if (checkRightX && checkRightY && isSticky && active == false)
+                if (isSticky)
                 {
-                    myGridX += movementUnit;
-                    myGridObjScript.gridPosition.x = myGridX;
+                    GameObject activeSticky = gridObject.gameObject;
+                    sticky stickyScript = activeSticky.GetComponent<sticky>();
+                    stickyIsActive = stickyScript.active == true;
+                    stickyScript.checkStickyDidNotMove();
+                }
+                if (checkRightX && checkRightY && stickyIsActive)
+                {
+                    if (stickyDidNotMove)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        myGridX += movementUnit;
+                        myGridObjScript.gridPosition.x = myGridX;
+                    }
                 }
             }
         }
@@ -277,6 +299,44 @@ public class Clingy : MonoBehaviour
                     else
                     {
                         myGridY -= movementUnit;
+                        myGridObjScript.gridPosition.y = myGridY;
+                    }
+                }
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            //clingy and slick cannot pull/push each other so the only block that will affect clingy other than the player is sticky
+            //checks if there is a sticky above
+            GridObject[] gridObjects = FindObjectsOfType<GridObject>();
+            for (int i = 0; i < gridObjects.Length; i++)
+            {
+                GridObject gridObject = gridObjects[i];
+                bool checkDownX = gridObject.gridPosition.x == myGridX;
+                bool checkDownY = gridObject.gridPosition.y == myGridY + movementUnit;
+                bool isSticky = gridObject.gameObject.tag == "Sticky";
+
+                if (isSticky)
+                {
+                    GameObject activeSticky = gridObject.gameObject;
+                    sticky stickyScript = activeSticky.GetComponent<sticky>();
+                    stickyIsActive = stickyScript.active == true;
+                    stickyScript.checkStickyDidNotMove();
+                    Debug.Log(stickyDidNotMove);
+                    //stickyDidNotMove = stickyScript.stickyDidNotMove == true;
+
+                }
+                //solving this will stop blocks from colliding with one another as well as from moving before they are supposed to 
+                if (checkDownX && checkDownY && stickyIsActive)
+                {
+                    if (stickyDidNotMove)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        myGridY += movementUnit;
                         myGridObjScript.gridPosition.y = myGridY;
                     }
                 }
